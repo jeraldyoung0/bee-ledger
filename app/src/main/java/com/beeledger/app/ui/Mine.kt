@@ -75,6 +75,8 @@ fun MineScreen(ver: Int, onOpenLog: () -> Unit, onOpenRules: () -> Unit) {
 
     var autoOn by remember { mutableStateOf(Prefs.autoCapture) }
     var smsAutoOn by remember { mutableStateOf(Prefs.autoSms) }
+    var readAutoOn by remember { mutableStateOf(Prefs.autoRead) }
+    val a11yOn = remember(refresh) { hasA11y(ctx) }
 
     val smsLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -217,6 +219,58 @@ fun MineScreen(ver: Int, onOpenLog: () -> Unit, onOpenRules: () -> Unit) {
                     }
                 )
             }
+        }
+
+        Spacer(Modifier.height(14.dp))
+        Text(
+            "读屏自动记账",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 4.dp, bottom = 6.dp)
+        )
+
+        CardBox {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("开启读屏记账", fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        "识别 微信 / 支付宝 / 抖音 / 拼多多 的「支付成功」页",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Switch(
+                    checked = readAutoOn,
+                    onCheckedChange = {
+                        readAutoOn = it
+                        Prefs.autoRead = it
+                    }
+                )
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant
+            )
+
+            PermissionRow(
+                title = "无障碍权限",
+                desc = if (a11yOn) "已开启，付款后能自动识别金额"
+                else "未开启：微信 / 支付宝 / 抖音 付款不会自动记账",
+                ok = a11yOn,
+                action = "去开启"
+            ) {
+                openA11ySettings(ctx)
+            }
+
+            Text(
+                "本服务只在这 5 个 App 内运行，其他应用的界面系统不会转发过来；" +
+                    "只处理「支付成功」这类很短的页面，其他内容立即丢弃、不保存。",
+                fontSize = 10.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 10.dp)
+            )
         }
 
         Spacer(Modifier.height(14.dp))
@@ -443,6 +497,24 @@ private fun hasNotifAccess(ctx: Context): Boolean = try {
     enabled != null && enabled.contains(ctx.packageName)
 } catch (e: Exception) {
     false
+}
+
+private fun hasA11y(ctx: Context): Boolean = try {
+    val enabled = Settings.Secure.getString(ctx.contentResolver, "enabled_accessibility_services")
+    enabled != null && enabled.contains(ctx.packageName) && enabled.contains("PayReadService")
+} catch (e: Exception) {
+    false
+}
+
+private fun openA11ySettings(ctx: Context) {
+    try {
+        ctx.startActivity(
+            Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
+    } catch (e: Exception) {
+        Toast.makeText(ctx, "请手动到 设置 → 无障碍 中开启", Toast.LENGTH_LONG).show()
+    }
 }
 
 private fun openNotificationSettings(ctx: Context) {

@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
 
-        <!-- 核心：监听其他 App 的通知，识别支付信息 -->
+        <!-- 通道一：监听其他 App 的通知，识别支付信息 -->
         <service
             android:name=".capture.PayNotificationListener"
             android:exported="true"
@@ -37,7 +37,7 @@
             </intent-filter>
         </service>
 
-        <!-- 核心：接收银行交易短信 -->
+        <!-- 通道二：接收银行交易短信 -->
         <receiver
             android:name=".capture.SmsReceiver"
             android:exported="true">
@@ -45,6 +45,20 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
+        <!-- 通道三：读屏识别「支付成功」页面（微信/支付宝/抖音/拼多多/云闪付） -->
+        <service
+            android:name=".capture.PayReadService"
+            android:exported="true"
+            android:label="@string/a11y_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
 
     </application>
 

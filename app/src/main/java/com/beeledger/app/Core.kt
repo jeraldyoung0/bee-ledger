@@ -109,6 +109,10 @@ object Prefs {
         get() = sp?.getBoolean("auto_sms", true) ?: true
         set(v) { sp?.edit()?.putBoolean("auto_sms", v)?.apply() }
 
+    var autoRead: Boolean
+        get() = sp?.getBoolean("auto_read", true) ?: true
+        set(v) { sp?.edit()?.putBoolean("auto_read", v)?.apply() }
+
     var budget: Long
         get() = sp?.getLong("budget_cents", 0L) ?: 0L
         set(v) { sp?.edit()?.putLong("budget_cents", v)?.apply() }

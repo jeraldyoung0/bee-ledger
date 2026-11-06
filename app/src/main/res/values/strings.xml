@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">蜜蜂记账</string>
+    <string name="a11y_label">蜜蜂记账 · 读屏记账</string>
+    <string name="a11y_desc">只在微信、支付宝、抖音、拼多多、云闪付中识别「支付成功」页面的金额。不读取其他应用。</string>
 </resources>

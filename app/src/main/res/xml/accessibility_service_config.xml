@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  无障碍服务配置。
+
+  最关键的一行是 android:packageNames：
+  系统会按这个名单做「硬过滤」——名单之外的应用，其界面事件根本不会送到本服务。
+  这不是靠代码自觉，而是系统层面的隔离。
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagDefault"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/a11y_desc"
+    android:notificationTimeout="150"
+    android:packageNames="com.tencent.mm,com.eg.android.AlipayGphone,com.ss.android.ugc.aweme,com.xunmeng.pinduoduo,com.unionpay" />
